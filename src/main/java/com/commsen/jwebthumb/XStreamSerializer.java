@@ -22,6 +22,8 @@ package com.commsen.jwebthumb;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import com.commsen.jwebthumb.xstream.WebThumbDoubleConverter;
+import com.commsen.jwebthumb.xstream.WebThumbJobConverter;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 
@@ -31,7 +33,7 @@ import com.thoughtworks.xstream.io.xml.DomDriver;
  * @author <a href="mailto:MilenDyankov@gmail.com">Milen Dyankov</a>
  * 
  */
-public class WebThumbXML {
+public class XStreamSerializer {
 
 	private static final XStream requestStream = new XStream(new DomDriver());
 	private static final XStream responseStream = new XStream(new DomDriver());

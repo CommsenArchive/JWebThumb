@@ -104,7 +104,7 @@ public class WebThumbService {
 			connection.setDoOutput(true);
 			connection.setRequestMethod("POST");
 
-			WebThumbXML.generateRequest(webThumb, connection.getOutputStream());
+			XStreamSerializer.generateRequest(webThumb, connection.getOutputStream());
 
 			int responseCode = connection.getResponseCode();
 			String contentType = getContentType(connection);
@@ -121,7 +121,7 @@ public class WebThumbService {
 					throw new WebThumbException("Unknown content type in response: " + contentType);
 				}
 
-				WebThumbResponse webThumbResponse = WebThumbXML.readResponse(connection.getInputStream(), WebThumbResponse.class);
+				WebThumbResponse webThumbResponse = XStreamSerializer.readResponse(connection.getInputStream(), WebThumbResponse.class);
 				if (LOGGER.isLoggable(Level.FINE)) {
 					LOGGER.fine("Response processed! Returning: " + webThumbResponse.getJobs());
 				}
@@ -159,7 +159,7 @@ public class WebThumbService {
 			connection.setDoOutput(true);
 			connection.setRequestMethod("POST");
 
-			WebThumbXML.generateRequest(webThumb, connection.getOutputStream());
+			XStreamSerializer.generateRequest(webThumb, connection.getOutputStream());
 
 			int responseCode = connection.getResponseCode();
 			String contentType = getContentType(connection);
@@ -220,7 +220,7 @@ public class WebThumbService {
 			connection.setDoOutput(true);
 			connection.setRequestMethod("POST");
 
-			WebThumbXML.generateRequest(webThumb, connection.getOutputStream());
+			XStreamSerializer.generateRequest(webThumb, connection.getOutputStream());
 
 			int responseCode = connection.getResponseCode();
 			String contentType = getContentType(connection);
@@ -235,7 +235,7 @@ public class WebThumbService {
 				if (!CONTENT_TYPE_TEXT_XML.equals(contentType)) {
 					throw new WebThumbException("Unknown content type in response: " + contentType);
 				}
-				WebThumbResponse webThumbResponse = WebThumbXML.readResponse(connection.getInputStream(), WebThumbResponse.class);
+				WebThumbResponse webThumbResponse = XStreamSerializer.readResponse(connection.getInputStream(), WebThumbResponse.class);
 				if (LOGGER.isLoggable(Level.FINE)) {
 					LOGGER.fine("Response processed! Returning: " + webThumbResponse.getCredits());
 					LOGGER.fine("Content type: " + contentType);

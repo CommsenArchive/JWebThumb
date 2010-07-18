@@ -48,7 +48,7 @@ public class WebThumbJob {
 	/**
 	 * @param estimate the estimate to set
 	 */
-	void setEstimate(int estimate) {
+	public void setEstimate(int estimate) {
 		this.estimate = estimate;
 	}
 
@@ -64,7 +64,7 @@ public class WebThumbJob {
 	/**
 	 * @param time the time to set
 	 */
-	void setTime(Date time) {
+	public void setTime(Date time) {
 		this.time = time;
 	}
 
@@ -80,7 +80,7 @@ public class WebThumbJob {
 	/**
 	 * @param url the url to set
 	 */
-	void setUrl(String url) {
+	public void setUrl(String url) {
 		this.url = url;
 	}
 
@@ -96,7 +96,7 @@ public class WebThumbJob {
 	/**
 	 * @param cost the cost to set
 	 */
-	void setCost(int cost) {
+	public void setCost(int cost) {
 		this.cost = cost;
 	}
 
@@ -112,7 +112,7 @@ public class WebThumbJob {
 	/**
 	 * @param id the id to set
 	 */
-	void setId(String id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 

@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with JWebThumb library.  If not, see <http://www.gnu.org/licenses/lgpl.html>.
  */
-package com.commsen.jwebthumb;
+package com.commsen.jwebthumb.xstream;
 
 import com.thoughtworks.xstream.converters.basic.DoubleConverter;
 
