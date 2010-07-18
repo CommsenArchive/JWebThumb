@@ -31,6 +31,8 @@ import java.util.logging.Logger;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.Validate;
 
+import com.commsen.jwebthumb.xstream.XStreamSerializer;
+
 /**
  * This class provides convenient methods for webthumb's "request", "fetch" and "credits" API calls.
  * It does not support "status" call. Please use "notifications" instead by extending

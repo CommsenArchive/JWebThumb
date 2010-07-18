@@ -17,14 +17,18 @@
  * along with JWebThumb library.  If not, see <http://www.gnu.org/licenses/lgpl.html>.
  */
 
-package com.commsen.jwebthumb;
+package com.commsen.jwebthumb.xstream;
 
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import com.commsen.jwebthumb.xstream.WebThumbDoubleConverter;
-import com.commsen.jwebthumb.xstream.WebThumbJobConverter;
+import com.commsen.jwebthumb.WebThumb;
+import com.commsen.jwebthumb.WebThumbCredits;
+import com.commsen.jwebthumb.WebThumbJob;
+import com.commsen.jwebthumb.WebThumbRequest;
+import com.commsen.jwebthumb.WebThumbResponse;
 import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.converters.reflection.PureJavaReflectionProvider;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 
 /**
@@ -35,8 +39,8 @@ import com.thoughtworks.xstream.io.xml.DomDriver;
  */
 public class XStreamSerializer {
 
-	private static final XStream requestStream = new XStream(new DomDriver());
-	private static final XStream responseStream = new XStream(new DomDriver());
+	private static final XStream requestStream = new XStream(new PureJavaReflectionProvider(), new DomDriver());
+	private static final XStream responseStream = new XStream(new PureJavaReflectionProvider(), new DomDriver());
 	static {
 		requestStream.alias("webthumb", WebThumb.class);
 		requestStream.addImplicitCollection(WebThumb.class, "requests");
