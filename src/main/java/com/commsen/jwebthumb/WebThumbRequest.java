@@ -120,7 +120,7 @@ public class WebThumbRequest implements Serializable {
 		private int x, y, width, height;
 
 
-		Excerpt(int x, int y, int width, int height) {
+		public Excerpt(int x, int y, int width, int height) {
 			super();
 			this.x = x;
 			this.y = y;
@@ -141,7 +141,7 @@ public class WebThumbRequest implements Serializable {
 		private int width, height;
 
 
-		CustomThumbnail(int width, int height) {
+		public CustomThumbnail(int width, int height) {
 			super();
 			this.width = width;
 			this.height = height;
