@@ -19,6 +19,7 @@
 package com.commsen.jwebthumb;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.simpleframework.xml.Element;
 
 /**
  * This class represents the payload of webthumb's 'fetch' API call. See
@@ -41,8 +42,10 @@ public class WebThumbFetchRequest {
 		small, medium, medium2, large, full, excerpt, effect, custom, zip
 	};
 
+	@Element
 	private String job;
 
+	@Element
 	private Size size;
 
 

@@ -21,6 +21,10 @@ package com.commsen.jwebthumb;
 
 import java.util.List;
 
+import org.simpleframework.xml.Element;
+import org.simpleframework.xml.ElementList;
+import org.simpleframework.xml.Root;
+
 /**
  * This class represents the xml payload of all webthumb requests. See
  * http://webthumb.bluga.net/apidoc for details.
@@ -28,14 +32,19 @@ import java.util.List;
  * @author <a href="mailto:MilenDyankov@gmail.com">Milen Dyankov</a>
  * 
  */
+@Root(name = "webthumb")
 public class WebThumb {
 
+	@Element
 	private String apikey;
 
+	@ElementList(required = false, inline = true, entry = "request")
 	private List<WebThumbRequest> requests;
 
+	@Element(required = false, name = "fetch")
 	private WebThumbFetchRequest fetchRequest;
 
+	@Element(required = false)
 	private WebThumbCredits credits;
 
 

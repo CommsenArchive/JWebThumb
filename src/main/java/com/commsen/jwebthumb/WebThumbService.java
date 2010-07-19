@@ -31,7 +31,7 @@ import java.util.logging.Logger;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.Validate;
 
-import com.commsen.jwebthumb.xstream.XStreamSerializer;
+import com.commsen.jwebthumb.simplexml.SimpleXmlSerializer;
 
 /**
  * This class provides convenient methods for webthumb's "request", "fetch" and "credits" API calls.
@@ -106,7 +106,7 @@ public class WebThumbService {
 			connection.setDoOutput(true);
 			connection.setRequestMethod("POST");
 
-			XStreamSerializer.generateRequest(webThumb, connection.getOutputStream());
+			SimpleXmlSerializer.generateRequest(webThumb, connection.getOutputStream());
 
 			int responseCode = connection.getResponseCode();
 			String contentType = getContentType(connection);
@@ -123,7 +123,7 @@ public class WebThumbService {
 					throw new WebThumbException("Unknown content type in response: " + contentType);
 				}
 
-				WebThumbResponse webThumbResponse = XStreamSerializer.readResponse(connection.getInputStream(), WebThumbResponse.class);
+				WebThumbResponse webThumbResponse = SimpleXmlSerializer.parseResponse(connection.getInputStream(), WebThumbResponse.class);
 				if (LOGGER.isLoggable(Level.FINE)) {
 					LOGGER.fine("Response processed! Returning: " + webThumbResponse.getJobs());
 				}
@@ -161,7 +161,7 @@ public class WebThumbService {
 			connection.setDoOutput(true);
 			connection.setRequestMethod("POST");
 
-			XStreamSerializer.generateRequest(webThumb, connection.getOutputStream());
+			SimpleXmlSerializer.generateRequest(webThumb, connection.getOutputStream());
 
 			int responseCode = connection.getResponseCode();
 			String contentType = getContentType(connection);
@@ -222,7 +222,7 @@ public class WebThumbService {
 			connection.setDoOutput(true);
 			connection.setRequestMethod("POST");
 
-			XStreamSerializer.generateRequest(webThumb, connection.getOutputStream());
+			SimpleXmlSerializer.generateRequest(webThumb, connection.getOutputStream());
 
 			int responseCode = connection.getResponseCode();
 			String contentType = getContentType(connection);
@@ -237,7 +237,7 @@ public class WebThumbService {
 				if (!CONTENT_TYPE_TEXT_XML.equals(contentType)) {
 					throw new WebThumbException("Unknown content type in response: " + contentType);
 				}
-				WebThumbResponse webThumbResponse = XStreamSerializer.readResponse(connection.getInputStream(), WebThumbResponse.class);
+				WebThumbResponse webThumbResponse = SimpleXmlSerializer.parseResponse(connection.getInputStream(), WebThumbResponse.class);
 				if (LOGGER.isLoggable(Level.FINE)) {
 					LOGGER.fine("Response processed! Returning: " + webThumbResponse.getCredits());
 					LOGGER.fine("Content type: " + contentType);

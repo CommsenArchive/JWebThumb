@@ -19,6 +19,7 @@
 package com.commsen.jwebthumb;
 
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
+import org.simpleframework.xml.Element;
 
 /**
  * This class represent webthumb's response to "credits" API call. See
@@ -30,11 +31,22 @@ import org.apache.commons.lang.builder.ReflectionToStringBuilder;
  */
 public class WebThumbCredits {
 
+	@Element(required = false, name = "requests-this-month")
 	Integer requestsThisMonth;
+
+	@Element(required = false, name = "used-this-month")
 	Double usedThisMonth;
+
+	@Element(required = false, name = "easythumb-cached-this-month")
 	Double cachedThisMonth;
+
+	@Element(required = false)
 	Integer subscription;
+
+	@Element(required = false, name = "subscription-left")
 	Integer subscriptionLeft;
+
+	@Element(required = false)
 	Double reserve;
 
 

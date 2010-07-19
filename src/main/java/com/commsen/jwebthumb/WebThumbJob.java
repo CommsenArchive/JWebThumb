@@ -18,9 +18,12 @@
  */
 package com.commsen.jwebthumb;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
+import org.simpleframework.xml.Attribute;
+import org.simpleframework.xml.Text;
 
 /**
  * This class represents 'jobs' part of webthumb's response to "request" API call. See
@@ -30,10 +33,22 @@ import org.apache.commons.lang.builder.ReflectionToStringBuilder;
  * 
  */
 public class WebThumbJob {
+
+	private static final SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+	@Attribute
 	private int estimate;
+
+	@Attribute(name = "time")
 	private Date time;
+
+	@Attribute
 	private String url;
+
+	@Attribute
 	private int cost;
+
+	@Text
 	private String id;
 
 

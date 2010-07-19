@@ -22,6 +22,8 @@ import java.io.Serializable;
 
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.simpleframework.xml.Attribute;
+import org.simpleframework.xml.Element;
 
 /**
  * This class represents the payload of webthumb's 'request' API call. See
@@ -45,51 +47,61 @@ public class WebThumbRequest implements Serializable {
 	/**
 	 * The url to snapshot
 	 */
+	@Element
 	private String url;
 
 	/**
 	 * The image output type (jpg|png|png8)
 	 */
+	@Element
 	private OutputType outputType;
 
 	/**
 	 * Width of the browser, 15 to 1280;
 	 */
+	@Element(required = false)
 	private Integer width;
 
 	/**
 	 * Height of the browser, 15 to 2048
 	 */
+	@Element(required = false)
 	private Integer height;
 
 	/**
 	 * Output a full sized snapshot
 	 */
+	@Element(required = false)
 	private Integer fullthumb;
 
 	/**
 	 * 2 attributes width, height (1 to browser height), width (1 to browser width)
 	 */
+	@Element(required = false)
 	private CustomThumbnail customThumbnail;
 
 	/**
 	 * Visual effect thumbnail to produce (mirror|dropshadow|border)
 	 */
+	@Element(required = false)
 	private String effect;
 
 	/**
 	 * Wait before taking the snapshot (1 to 15 seconds, 3 second default)
 	 */
+	@Element(required = false)
 	private Integer delay;
 
 	/**
 	 * Url to call when the thumbnail is complete
 	 */
+	@Element(required = false)
 	private String notify;
 
 	/**
 	 * Size and offset of the excerpt thumnbnail
 	 */
+	@Element(required = false)
 	private Excerpt excerpt;
 
 
@@ -104,6 +116,7 @@ public class WebThumbRequest implements Serializable {
 	}
 
 	public static class Excerpt {
+		@Element
 		private int x, y, width, height;
 
 
@@ -124,6 +137,7 @@ public class WebThumbRequest implements Serializable {
 	}
 
 	public static class CustomThumbnail {
+		@Attribute
 		private int width, height;
 
 
