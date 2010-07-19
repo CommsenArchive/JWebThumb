@@ -6,7 +6,7 @@
 
 	<groupId>com.commsen</groupId>
 	<artifactId>jwebthumb</artifactId>
-	<version>0.2</version>
+	<version>0.2-simple</version>
 	<packaging>jar</packaging>
 
 	<name>JWebThumb</name>
