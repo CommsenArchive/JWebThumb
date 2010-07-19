@@ -26,7 +26,7 @@ import org.simpleframework.xml.transform.Transform;
 
 /**
  * @author <a href="mailto:MilenDyankov@gmail.com">Milen Dyankov</a>
- * 
+ * @since 0.3
  */
 public class JWebThumbMatcher implements Matcher {
 
