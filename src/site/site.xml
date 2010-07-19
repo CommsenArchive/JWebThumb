@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="JWebThumb">
+
+	<skin>
+		<groupId>com.commsen.maven.skin</groupId>
+		<artifactId>commsen-default-skin</artifactId>
+		<version>0.1</version>
+	</skin>
+
+	<bannerLeft>
+		<name>JWebThumb</name>
+	</bannerLeft>
+
+	<body>
+
+		<links>
+			<item
+				name="project page at SourceForge.net"
+				href="http://www.sourceforge.net/projects/jwebthumb" />
+			<item
+				name="other projects from Commsen"
+				href="http://www.commsen.com/en/projects" />
+		</links>
+
+		<menu name="JWebthumb">
+			<item
+				name="Wiki"
+				href="http://wiki.github.com/azzazzel/JWebThumb/" />
+			<item
+				name="Download"
+				href="http://sourceforge.net/projects/jwebthumb/files/" />
+			<item
+				name="Issues"
+				href="http://github.com/azzazzel/JWebThumb/issues" />
+		</menu>
+
+		${reports}
+
+
+	</body>
+
+	<poweredBy>
+		<logo
+			name="Maven"
+			href="http://maven.apache.org/"
+			img="http://maven.apache.org/images/logos/maven-feather.png" />
+		<logo
+			name="SourceForge"
+			href="http://www.sourceforge.net"
+			img="http://sflogo.sourceforge.net/sflogo.php?group_id=247394&amp;type=2" />
+		<logo
+			name="GitHub"
+			href="http://github.com"
+			img="http://github.com/images/modules/header/logov3.png" />
+	</poweredBy>
+
+
+	<search />
+
+</project>

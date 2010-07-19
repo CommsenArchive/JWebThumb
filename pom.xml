@@ -12,33 +12,41 @@
 	<name>JWebThumb</name>
 	<url>http://commsen.com/en/projects/jwebthumb.html</url>
 	<inceptionYear>2010</inceptionYear>
-
+	
 	<description>
-		JWebThumb is Java API for Bluga.net WebThumb  
-		web service API for generating web thumbnails 
-		and full size snapshots of websites.
+		JWebThumb is Java API for WebThumb (webthumb.bluga.net) web service API for generating web thumbnails and full size snapshots of websites.
 	</description>
+
+	<organization>
+		<name>COMMSEN International</name>
+		<url>http://commsen.com</url>
+	</organization>
+
+	<developers>
+		<developer>
+			<name>Milen Dyankov</name>
+			<email>MilenDyankov@gmail.com</email>
+			<organization>COMMSEN International</organization>
+			<organizationUrl>http://commsen.com</organizationUrl>
+		</developer>
+	</developers>
 
 	<scm>
 		<connection>scm:git://github.com/azzazzel/JWebThumb.git</connection>
 		<url>http://github.com/azzazzel/JWebThumb</url>
 	</scm>
 
+	<issueManagement>
+		<url>http://github.com/azzazzel/JWebThumb/issues</url>
+	</issueManagement>
+
 	<licenses>
 		<license>
+			<distribution>manual</distribution>
 			<name>GNU Lesser General Public License</name>
 			<url>http://www.gnu.org/licenses/lgpl-3.0.txt</url>
 		</license>
 	</licenses>
-
-	<developers>
-		<developer>
-			<name>Milen Dyankov</name>
-			<email>MilenDyankov@gmail.com</email>
-			<organization>Commsen International</organization>
-			<organizationUrl>http://commsen.com</organizationUrl>
-		</developer>
-	</developers>
 
 
 	<properties>
@@ -85,6 +93,7 @@
 	</dependencies>
 
 
+	
 	<build>
 		<plugins>
 			<plugin>
@@ -105,4 +114,51 @@
 			</plugin>
 		</plugins>
 	</build>
+	
+	<reporting>
+		<plugins>
+
+			<plugin>
+				<artifactId>maven-javadoc-plugin</artifactId>
+			</plugin>
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>surefire-report-maven-plugin</artifactId>
+			</plugin>
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>taglist-maven-plugin</artifactId>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-pmd-plugin</artifactId>
+				<configuration>
+					<format>xml</format>
+					<linkXref>true</linkXref>
+					<sourceEncoding>utf-8</sourceEncoding>
+					<minimumTokens>100</minimumTokens>
+					<targetJdk>1.5</targetJdk>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>jxr-maven-plugin</artifactId>
+			</plugin>
+
+		</plugins>
+	</reporting>
+
+	<distributionManagement>
+		<site>
+			<id>jwebthumb.sf.net</id>
+			<url>
+				scp://shell.sourceforge.net/home/groups/j/jw/jwebthumb/htdocs/
+			</url>
+		</site>
+	</distributionManagement>
+		
 </project>
