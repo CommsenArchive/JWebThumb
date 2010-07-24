@@ -24,11 +24,14 @@
 
 		<menu name="JWebthumb">
 			<item
-				name="Wiki"
-				href="http://wiki.github.com/azzazzel/JWebThumb/" />
+				name="Home"
+				href="/index.html" />
 			<item
 				name="Download"
 				href="http://sourceforge.net/projects/jwebthumb/files/" />
+			<item
+				name="Source"
+				href="http://github.com/azzazzel/JWebThumb" />
 			<item
 				name="Issues"
 				href="http://github.com/azzazzel/JWebThumb/issues" />

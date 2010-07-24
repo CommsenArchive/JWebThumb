@@ -1,0 +1,262 @@
+	------
+	JWebThumb
+	------
+	Milen Dyankov
+	------
+	
+
+JWebThumb 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+	JWebThumb is easy to use Java API wrapping bluga.net's webthumb web service API for generating web 
+	thumbnails and full size snapshots of websites.
+	
+	In order to use JWebThumb you need to have your own API KEY from {{{http://webthumb.bluga.net}bluga.net webthumb}}. 	
+	In order to get your API KEY you need to 
+
+	* {{{http://webthumb.bluga.net/register}Register}} with webthumb
+	
+	* {{{http://webthumb.bluga.net/login}Login}} to your account
+	
+	* go to your user page and scroll down to <<<api details>>> section
+
+	[]
+
+	As a registered user you will get 100 free credits per month. You can purchase more credits if needed. 
+	Please visit {{http://webthumb.bluga.net/purchase}}	for pricing. 
+	Please refer to {{http://webthumb.bluga.net/apidoc#cost}} for information how much a single thumbnail costs. 
+	
+	Having your API KEY you can star using JWebThumb
+	
+	
+	
+* Create WebThumbService
+	
+	<<<WebThumbService>>> is the main service class responsible for handling requests. It's thread safe so you can only
+	create it once and use it from anywhere in your application.  
+		
++------------------------------------------------------------------------------------------------------------------------+ 	
+	WebThumbService webThumbService = new WebThumbService("YOUR API KEY");
++------------------------------------------------------------------------------------------------------------------------+ 	
+	
+	
+	
+* Request thumbnail
+	
+** The simpliest example
+
+	All you need to do to request a thumbnail of <<<http://your.web.site.com>>> is
+	
++------------------------------------------------------------------------------------------------------------------------+ 	
+	WebThumbRequest request = new WebThumbRequest("http://your.web.site.com", OutputType.jpg);
+	WebThumbJob job = null;
+	try {
+		job = webThumbService.sendRequest(request);
+	} catch (WebThumbException e) {
+		// handle error appropriately 
+	}
++------------------------------------------------------------------------------------------------------------------------+ 	
+
+	The <<<job>>> will contain server's response. There is some useful information like when the thumbnail 
+	will be ready and how much it costs. Here is an example of constructing user friendly message based on    
+	information in <<<WebThumbJob>>> class
+	
++------------------------------------------------------------------------------------------------------------------------+ 	
+	StringBuilder sb = new StringBuilder();
+	sb.append("The server confirms a request for '").append(job.getUrl())
+		.append("' was received on '").append(job.getTime())
+		.append("'. Thumbnail will be ready in about ").append(job.getEstimate())
+		.append(" seconds! This request costs ").append(job.getCost())
+		.append(" credit(s). Please use '").append(job.getId())
+		.append("' job id, to fetch the thumbnail!");
+	System.out.println(sb);
++------------------------------------------------------------------------------------------------------------------------+ 	
+
+	which will print something like this
+	
++------------------------------------------------------------------------------------------------------------------------+ 	
+The server confirms a request for 'http://your.web.site.com' was received on 'Wed Jul 21 09:32:05 CEST 2010'. Thumbnail 
+will be ready in about 20 seconds! This request costs 1 credit(s). Please use 'wt4c47c204eae05' job id, to fetch the thumbnail!
++------------------------------------------------------------------------------------------------------------------------+ 	
+	
+	
+** More complex example
+
++------------------------------------------------------------------------------------------------------------------------+ 	
+	WebThumbRequest webThumbRequest = new WebThumbRequest("http://your.web.site.com");
+	
+	// specify output type. Could be one of OutputType.jpg, OutputType.png or OutputType.png8
+	webThumbRequest.setOutputType(OutputType.jpg); 
+	 
+	// request custom sized thumbnail 
+	webThumbRequest.setCustomThumbnail(new CustomThumbnail(10, 10));
+	
+	// wait 5 seconds before taking the snapshot (1 to 15 seconds, 3 second default)
+	webThumbRequest.setDelay(5);
+	
+	// request to apply visual effect. Could be one of "mirror", "dropshadow" or "border"
+	webThumbRequest.setEffect("mirror");
+	
+	// specify size and offset of the excerpt thumbnail
+	webThumbRequest.setExcerpt(new Excerpt(10, 10, 200, 200));
+	
+	// request full sized snapshot 
+	webThumbRequest.setFullthumb(true);
+	
+	// specify the height of the browser, 15 to 2048	
+	webThumbRequest.setHeight(250);
+	
+	// specify the width of the browser, 15 to 1280	
+	webThumbRequest.setWidth(250);
+	
+	// specify an url to call when the thumbnail is complete
+	webThumbRequest.setNotify("http://my.listener.site");
+	
+	// send request 
+	WebThumbJob job = null;
+	try {
+		job = webThumbService.sendRequest(request);
+	} catch (WebThumbException e) {
+		// handle error appropriately 
+	}
++------------------------------------------------------------------------------------------------------------------------+ 	
+
+
+** Sending multiple requests at once
+
++------------------------------------------------------------------------------------------------------------------------+ 	
+	List<WebThumbRequest> requests = new ArrayList<WebThumbRequest>();
+	requests.add(new WebThumbRequest("http://your.web.site.com", OutputType.jpg));
+	requests.add(new WebThumbRequest("http://another.web.site.com", OutputType.png));
+	
+	List<WebThumbJob> jobs = null;
+	try {
+		jobs = webThumbService.sendRequest(requests);
+	} catch (WebThumbException e) {
+		// handle error appropriately 
+	}
++------------------------------------------------------------------------------------------------------------------------+ 	
+
+
+
+* Fetch thumbnail
+
+	The following example shows how to fetch ready thumbnail (<Exception handling code is omitted>).
+	
++------------------------------------------------------------------------------------------------------------------------+ 	
+	WebThumbFetchRequest fetchRequest = new WebThumbFetchRequest("wt4c47c204eae05", Size.zip);
+	byte[] imageBytes = webThumbService.fetch(fetchRequest);
+	FileOutputStream fos = new FileOutputStream(new File("/some/folder/site_thumbnails.zip"));
+	fos.write(imageBytes);
++------------------------------------------------------------------------------------------------------------------------+ 	
+	
+	Possible fetch sizes are :
+
+	* small - 80x60
+
+	* medium - 160x120
+
+	* medium2 - 320x240
+
+	* large - 640x480
+
+	* full
+
+	* excerpt
+
+	* effect
+
+	* custom
+
+	* zip - 5 thumbnails in a zip file
+
+		** small
+
+		** medium 
+
+		** medium2
+
+		** large
+
+		** excerpt - 400x150 (taken from the top left corner by default)  
+
+
+* Create notification servlet
+
+	If you use JWebThumb in a web application you can make use of notification servlet and instruct bluga.net's 
+	webthumb web service to send notification on given URL when your thumbnail is complete. Implementing a servlet 
+	which will fetch the thumbnail as soon as notification is received is as simple as this:
+	 
++------------------------------------------------------------------------------------------------------------------------+ 	
+package com.commsen.jwebthumb.example;
+
+public class MyWebThumbServlet extends WebThumbNotificationServlet {
+
+	public void processThumb(String id, String url) {
+		WebThumbFetchRequest webThumbFetchRequest = new WebThumbFetchRequest(id, Size.medium2);
+		
+		byte[] thumbnail;
+		try {
+			return service.fetch(webThumbFetchRequest);
+		} catch (WebThumbException e) {
+			// handle error appropriately 
+		}
+
+		FileOutputStream fos = new FileOutputStream(new File("/some/folder/site_medium2_thumbnail.jpg"));
+		fos.write(thumbnail);
+	}
+}
++------------------------------------------------------------------------------------------------------------------------+ 	
+	
+	Then you need to add the servlet to your <<<web.xml>>>. Make sure you provide hard to guess secure key to prevent 
+	fake calls to your servlet:
+	
++------------------------------------------------------------------------------------------------------------------------+ 	
+	<servlet>
+		<servlet-name>MyWebThumbServlet</servlet-name>
+		<servlet-class>com.commsen.jwebthumb.example.MyWebThumbServlet</servlet-class>
+		<init-param>
+			<param-name>key</param-name>
+			<param-value>my_hard_to_guess_secure_key</param-value>
+		</init-param>
+	</servlet>
+	
+	<servlet-mapping>
+		<servlet-name>WebThumbServlet</servlet-name>
+		<url-pattern>/WebThumbNotifications</url-pattern>
+	</servlet-mapping>
++------------------------------------------------------------------------------------------------------------------------+ 	
+	
+	Now, during request, you can tell the server to notify your servlet when thumbnail is ready 
+	
++------------------------------------------------------------------------------------------------------------------------+ 	
+	WebThumbRequest request = new WebThumbRequest("http://your.web.site.com", OutputType.jpg);
+	webThumbRequest.setNotify("http://YOUR.WEB.SITE/WebThumbNotifications?key=my_hard_to_guess_secure_key");
+	
+	WebThumbJob job = null;
+	try {
+		job = webThumbService.sendRequest(request);
+	} catch (WebThumbException e) {
+		// handle error appropriately 
+	}
++------------------------------------------------------------------------------------------------------------------------+ 	
+	   
+
+* Check your credit status
+
+	The following example shows how to check your credit status
+	
++------------------------------------------------------------------------------------------------------------------------+ 	
+	WebThumbCredits credits = webThumbService.getCredits();
+	
+	System.out.println("Used credits this month: " + credits.getUsedThisMonth());
+	System.out.println("Requests this month: " + credits.getRequestsThisMonth());
+	System.out.println("Cached this month: " + credits.getCachedThisMonth());
+	System.out.println("Non-expiring credits: " + credits.getReserve());
+	System.out.println("Subscription credits: " + credits.getSubscription());
+	System.out.println("Subscription credits left: " + credits.getSubscriptionLeft());
++------------------------------------------------------------------------------------------------------------------------+ 	
+
+
+
+	  
