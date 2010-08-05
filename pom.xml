@@ -10,9 +10,9 @@
 	<packaging>jar</packaging>
 
 	<name>JWebThumb</name>
-	<url>http://commsen.com/en/projects/jwebthumb.html</url>
+	<url>http://jwebthumb.sourceforge.net/</url>
 	<inceptionYear>2010</inceptionYear>
-	
+
 	<description>
 		JWebThumb is Java API for WebThumb (webthumb.bluga.net) web service API for generating web thumbnails and full size snapshots of websites.
 	</description>
@@ -32,8 +32,9 @@
 	</developers>
 
 	<scm>
-		<connection>scm:git://github.com/azzazzel/JWebThumb.git</connection>
-		<url>http://github.com/azzazzel/JWebThumb</url>
+		<connection>scm:git:git://github.com/azzazzel/JWebThumb.git</connection>
+		<developerConnection>scm:git:git://github.com/azzazzel/JWebThumb.git</developerConnection>
+		<url>http://github.com/azzazzel/JWebThumb/</url>
 	</scm>
 
 	<issueManagement>
@@ -93,7 +94,7 @@
 	</dependencies>
 
 
-	
+
 	<build>
 		<plugins>
 			<plugin>
@@ -112,9 +113,26 @@
 					</descriptorRefs>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-gpg-plugin</artifactId>
+				<version>1.1</version>
+				<executions>
+					<execution>
+						<id>sign-artifacts</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>sign</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<keyname>6967ECA1</keyname>
+        		</configuration>
+			</plugin>
 		</plugins>
 	</build>
-	
+
 	<reporting>
 		<plugins>
 
@@ -160,5 +178,5 @@
 			</url>
 		</site>
 	</distributionManagement>
-		
+
 </project>
