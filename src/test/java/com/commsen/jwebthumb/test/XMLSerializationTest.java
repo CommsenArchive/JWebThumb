@@ -18,6 +18,7 @@
  */
 package com.commsen.jwebthumb.test;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -52,7 +53,7 @@ import com.commsen.jwebthumb.simplexml.SimpleXmlSerializer;
 public class XMLSerializationTest {
 
 	@Test
-	public void SerializeWebThumbRequest() throws SAXException, IOException, ParserConfigurationException, XPathExpressionException {
+	public void serializeWebThumbRequest() throws SAXException, IOException, ParserConfigurationException, XPathExpressionException {
 		WebThumbRequest webThumbRequest = new WebThumbRequest("http://web.site.address");
 		webThumbRequest.setOutputType(OutputType.jpg);
 		webThumbRequest.setCustomThumbnail(new CustomThumbnail(10, 20));
@@ -68,8 +69,6 @@ public class XMLSerializationTest {
 		webThumbRequests.add(webThumbRequest);
 		WebThumb webThumb = new WebThumb("API KEY", webThumbRequests);
 		String xml = SimpleXmlSerializer.generateRequest(webThumb);
-
-		System.out.println(xml);
 
 		Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new InputSource(new StringReader(xml)));
 		Element webthumb = document.getDocumentElement();
@@ -96,12 +95,10 @@ public class XMLSerializationTest {
 
 
 	@Test
-	public void SerializeWebThumbFetch() throws SAXException, IOException, ParserConfigurationException, XPathExpressionException {
+	public void serializeWebThumbFetch() throws SAXException, IOException, ParserConfigurationException, XPathExpressionException {
 		WebThumbFetchRequest webThumbFetchRequest = new WebThumbFetchRequest("JOB ID", Size.medium2);
 		WebThumb webThumb = new WebThumb("API KEY", webThumbFetchRequest);
 		String xml = SimpleXmlSerializer.generateRequest(webThumb);
-
-		System.out.println(xml);
 
 		Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new InputSource(new StringReader(xml)));
 		Element webthumb = document.getDocumentElement();
@@ -116,11 +113,9 @@ public class XMLSerializationTest {
 
 
 	@Test
-	public void SerializeWebThumbCredits() throws SAXException, IOException, ParserConfigurationException, XPathExpressionException {
+	public void serializeWebThumbCredits() throws SAXException, IOException, ParserConfigurationException, XPathExpressionException {
 		WebThumb webThumb = WebThumb.creditsRequest("API KEY");
 		String xml = SimpleXmlSerializer.generateRequest(webThumb);
-
-		System.out.println(xml);
 
 		Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new InputSource(new StringReader(xml)));
 		Element webthumb = document.getDocumentElement();

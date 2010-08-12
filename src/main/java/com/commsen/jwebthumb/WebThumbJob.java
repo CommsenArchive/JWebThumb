@@ -18,7 +18,6 @@
  */
 package com.commsen.jwebthumb;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
@@ -33,8 +32,6 @@ import org.simpleframework.xml.Text;
  * 
  */
 public class WebThumbJob {
-
-	private static final SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 	@Attribute
 	private int estimate;
@@ -61,26 +58,10 @@ public class WebThumbJob {
 
 
 	/**
-	 * @param estimate the estimate to set
-	 */
-	public void setEstimate(int estimate) {
-		this.estimate = estimate;
-	}
-
-
-	/**
 	 * @return the time
 	 */
 	public Date getTime() {
-		return this.time;
-	}
-
-
-	/**
-	 * @param time the time to set
-	 */
-	public void setTime(Date time) {
-		this.time = time;
+		return this.time == null ? null : (Date) this.time.clone();
 	}
 
 
@@ -93,14 +74,6 @@ public class WebThumbJob {
 
 
 	/**
-	 * @param url the url to set
-	 */
-	public void setUrl(String url) {
-		this.url = url;
-	}
-
-
-	/**
 	 * @return the cost
 	 */
 	public int getCost() {
@@ -109,26 +82,10 @@ public class WebThumbJob {
 
 
 	/**
-	 * @param cost the cost to set
-	 */
-	public void setCost(int cost) {
-		this.cost = cost;
-	}
-
-
-	/**
 	 * @return the id
 	 */
 	public String getId() {
 		return this.id;
-	}
-
-
-	/**
-	 * @param id the id to set
-	 */
-	public void setId(String id) {
-		this.id = id;
 	}
 
 

@@ -30,7 +30,7 @@ import org.simpleframework.xml.transform.Transform;
  */
 public class DateTransformer implements Transform<Date> {
 
-	public static SimpleDateFormat timeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	public final SimpleDateFormat timeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 
 	/**

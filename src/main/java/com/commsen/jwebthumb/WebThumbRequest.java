@@ -115,7 +115,9 @@ public class WebThumbRequest implements Serializable {
 		this.outputType = outputType;
 	}
 
-	public static class Excerpt {
+	public static class Excerpt implements Serializable {
+		private static final long serialVersionUID = 1L;
+
 		@Element
 		private int x, y, width, height;
 
@@ -136,7 +138,9 @@ public class WebThumbRequest implements Serializable {
 
 	}
 
-	public static class CustomThumbnail {
+	public static class CustomThumbnail implements Serializable {
+		private static final long serialVersionUID = 1L;
+
 		@Attribute
 		private int width, height;
 

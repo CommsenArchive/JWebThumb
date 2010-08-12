@@ -37,11 +37,11 @@ import com.commsen.jwebthumb.simplexml.SimpleXmlSerializer;
  */
 public class XMLParsingTest {
 
-	public static SimpleDateFormat timeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	public static final SimpleDateFormat timeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 
 	@Test
-	public void ParseWebThumbResponse() throws ParseException {
+	public void parseWebThumbResponse() throws ParseException {
 		String response = "<webthumb>\n" + // 
 		        "	<jobs>\n" + //
 		        "		<job estimate='20' time='2008-02-27 16:49:48' url='http://blog.joshuaeichorn.com' cost='1'>wt47c5f71c37c3a</job>\n" + // 
@@ -71,7 +71,7 @@ public class XMLParsingTest {
 
 
 	@Test
-	public void ParseWebThumbCredits() throws ParseException {
+	public void parseWebThumbCredits() throws ParseException {
 		String response = "<webthumb>\n" + //
 		        "	<credits>\n" + //
 		        "		<used-this-month>1642.5</used-this-month>\n" + //
