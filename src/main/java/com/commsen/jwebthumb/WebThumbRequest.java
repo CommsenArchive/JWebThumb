@@ -54,7 +54,7 @@ public class WebThumbRequest implements Serializable {
 	 * The image output type (jpg|png|png8)
 	 */
 	@Element
-	private OutputType outputType;
+	private OutputType outputType = OutputType.jpg;
 
 	/**
 	 * Width of the browser, 15 to 1280;

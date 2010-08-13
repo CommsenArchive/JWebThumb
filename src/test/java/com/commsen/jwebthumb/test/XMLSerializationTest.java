@@ -127,4 +127,14 @@ public class XMLSerializationTest {
 		Assert.assertEquals("", xPath.evaluate("/webthumb/credits", document));
 	}
 
+
+	@Test
+	public void serializeToOutputStream() throws SAXException, IOException, ParserConfigurationException, XPathExpressionException {
+		WebThumb webThumb = WebThumb.creditsRequest("API KEY");
+		String xml = SimpleXmlSerializer.generateRequest(webThumb);
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		SimpleXmlSerializer.generateRequest(webThumb, baos);
+		Assert.assertEquals(baos.toString(), xml);
+	}
+
 }
