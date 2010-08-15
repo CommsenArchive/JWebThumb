@@ -22,8 +22,9 @@ import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.simpleframework.xml.Element;
 
 /**
- * This class represent webthumb's response to "credits" API call. See
- * http://webthumb.bluga.net/apidoc#credits for details
+ * This class represent webthumb's response to "credits" API call. See <a
+ * href="http://webthumb.bluga.net/apidoc#credits">http://webthumb.bluga.net/apidoc#credits</a> for
+ * details
  * 
  * @author <a href="mailto:MilenDyankov@gmail.com">Milen Dyankov</a>
  * @see http://webthumb.bluga.net/apidoc#credits

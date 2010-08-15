@@ -30,15 +30,22 @@ import javax.servlet.http.HttpServletResponse;
  * need to implement {@link #processThumb(String, String)} method in order to react on received
  * notification.
  * <p>
- * This servlet will handle notifications via both GET and POST methods. The webthumb key must be
- * provided as init parameter:
+ * This servlet will handle notifications via both GET and POST methods. To prevent fake calls to
+ * your servlet set <code>key</code> parameter to some hard to guess value:
  * 
  * <pre>
- * 		&lt;init-param&gt;
- * 			&lt;param-name&gt;key&lt;/param-name&gt;
- * 			&lt;param-value&gt;YOUR WEBTHUMB KEY&lt;/param-value&gt;
- * 		&lt;/init-param&gt;
+ * &lt;init-param&gt;
+ *   &lt;param-name&gt;key&lt;/param-name&gt;
+ *   &lt;param-value&gt;my_hard_to_guess_secure_key&lt;/param-value&gt;
+ * &lt;/init-param&gt;
  * </pre>
+ * 
+ * and make sure to provide the parameter in {@link WebThumbRequest#setNotify(String)} method:
+ * 
+ * <pre>
+ * webThumbRequest.setNotify(&quot;http://YOUR.WEB.SITE/WebThumbNotifications?key=my_hard_to_guess_secure_key&quot;);
+ * </pre>
+ * 
  * 
  * @see http://webthumb.bluga.net/apidoc#notify
  * 

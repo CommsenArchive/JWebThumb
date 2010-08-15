@@ -99,40 +99,22 @@ public class WebThumbService {
 			LOGGER.fine("Attempting to send webThumbRequests: " + webThumbRequests);
 		}
 		WebThumb webThumb = new WebThumb(apikey, webThumbRequests);
+		HttpURLConnection connection = sendWebThumb(webThumb);
 
 		try {
-			HttpURLConnection connection = (HttpURLConnection) new URL(WEB_THUMB_URL).openConnection();
-			connection.setInstanceFollowRedirects(false);
-			connection.setDoOutput(true);
-			connection.setRequestMethod("POST");
-
-			SimpleXmlSerializer.generateRequest(webThumb, connection.getOutputStream());
-
-			int responseCode = connection.getResponseCode();
-			String contentType = getContentType(connection);
+			WebThumbResponse webThumbResponse = SimpleXmlSerializer.parseResponse(connection.getInputStream(), WebThumbResponse.class);
 			if (LOGGER.isLoggable(Level.FINE)) {
-				LOGGER.fine("webThumbRequest sent. Got response: " + responseCode + " " + connection.getResponseMessage());
-				LOGGER.fine("Content type: " + contentType);
+				LOGGER.fine("Response processed! Returning: " + webThumbResponse.getJobs());
 			}
-
-			if (responseCode == HttpURLConnection.HTTP_OK) {
-				if (CONTENT_TYPE_TEXT_PLAIN.equals(contentType)) {
-					throw new WebThumbException("Got error message: " + IOUtils.toString(connection.getInputStream()));
-				}
-				if (!CONTENT_TYPE_TEXT_XML.equals(contentType)) {
-					throw new WebThumbException("Unknown content type in response: " + contentType);
-				}
-
-				WebThumbResponse webThumbResponse = SimpleXmlSerializer.parseResponse(connection.getInputStream(), WebThumbResponse.class);
-				if (LOGGER.isLoggable(Level.FINE)) {
-					LOGGER.fine("Response processed! Returning: " + webThumbResponse.getJobs());
-				}
-				return webThumbResponse.getJobs();
-			} else {
-				throw new WebThumbException("GOT error (" + connection.getResponseCode() + ") " + connection.getResponseMessage());
+			if (webThumbResponse.getError() != null) {
+				throw new WebThumbException("Server side error: " + webThumbResponse.getError().getValue());
 			}
-		} catch (MalformedURLException e) {
-			throw new WebThumbException("failed to send request", e);
+			if (webThumbResponse.getErrors() != null) {
+				for (WebThumbError webThumbError : webThumbResponse.getErrors()) {
+					LOGGER.warning("Server side error: " + webThumbError);
+				}
+			}
+			return webThumbResponse.getJobs();
 		} catch (IOException e) {
 			throw new WebThumbException("failed to send request", e);
 		}
@@ -149,7 +131,7 @@ public class WebThumbService {
 	 * @throws WebThumbException if the file can not be fetched for whatever reason
 	 */
 	public byte[] fetch(WebThumbFetchRequest webThumbFetchRequest) throws WebThumbException {
-		if (webThumbFetchRequest == null) throw new IllegalArgumentException("webThumbFetchRequest is null!");
+		Validate.notNull(webThumbFetchRequest, "webThumbFetchRequest is null!");
 		if (LOGGER.isLoggable(Level.FINE)) {
 			LOGGER.fine("Attempting to send webThumbFetchRequest: " + webThumbFetchRequest);
 		}
@@ -172,7 +154,7 @@ public class WebThumbService {
 
 			if (responseCode == HttpURLConnection.HTTP_OK) {
 				if (CONTENT_TYPE_TEXT_PLAIN.equals(contentType)) {
-					throw new WebThumbException("Got error message: " + IOUtils.toString(connection.getInputStream()));
+					throw new WebThumbException("Server side error: " + IOUtils.toString(connection.getInputStream()));
 				}
 
 				int contentLength = connection.getContentLength();
@@ -190,12 +172,61 @@ public class WebThumbService {
 				} else {
 					throw new WebThumbException("Failed to fetch image! Missing content length!");
 				}
+			} else if (responseCode == HttpURLConnection.HTTP_INTERNAL_ERROR) {
+				WebThumbResponse webThumbResponse = SimpleXmlSerializer.parseResponse(connection.getErrorStream(), WebThumbResponse.class);
+				throw new WebThumbException("Server side error: " + webThumbResponse.getError().getValue());
 			} else {
-				throw new WebThumbException("GOT error (" + connection.getResponseCode() + ") " + connection.getResponseMessage());
+				throw new WebThumbException("Server side error: " + connection.getResponseCode() + " " + connection.getResponseMessage());
 			}
 
 		} catch (MalformedURLException e) {
 			throw new WebThumbException("failed to send request", e);
+		} catch (IOException e) {
+			throw new WebThumbException("failed to send request", e);
+		}
+
+	}
+
+
+	/**
+	 * Checks the status of given job or list of jobs.
+	 * 
+	 * Make sure not to make more then 1 status request per second. More requests then that may get
+	 * you temporarily blocked at the firewall. Best Practice is to make a status request at most
+	 * every 10 seconds.
+	 * 
+	 * If your need to make a lot of requests, please look into using notifications instead of
+	 * polling for status. See {@link WebThumbRequest#setNotify(String)} and
+	 * {@link WebThumbNotificationServlet} for more details!
+	 * 
+	 * @param webThumbStatusRequest fetch request containing the job and size to be fetched
+	 * @return list of job statuses
+	 * @throws WebThumbException if the file can not be fetched for whatever reason
+	 */
+	public List<WebThumbStatus> getStatus(WebThumbStatusRequest webThumbStatusRequest) throws WebThumbException {
+		Validate.notNull(webThumbStatusRequest, "webThumbStatusRequest is null!");
+		if (LOGGER.isLoggable(Level.FINE)) {
+			LOGGER.fine("Attempting to send webThumbStatusRequest: " + webThumbStatusRequest);
+		}
+
+		WebThumb webThumb = new WebThumb(apikey, webThumbStatusRequest);
+		HttpURLConnection connection = sendWebThumb(webThumb);
+
+		try {
+			WebThumbResponse webThumbResponse = SimpleXmlSerializer.parseResponse(connection.getInputStream(), WebThumbResponse.class);
+			WebThumbJobStatus webThumbJobStatus = webThumbResponse.getJobStatus();
+			if (webThumbJobStatus == null) {
+				throw new WebThumbException("response missing 'jobStatus' element!");
+			}
+			if (webThumbJobStatus.getErrors() != null) {
+				for (WebThumbError webThumbError : webThumbJobStatus.getErrors()) {
+					LOGGER.warning("Server side error: " + webThumbError);
+				}
+			}
+			if (LOGGER.isLoggable(Level.FINE)) {
+				LOGGER.fine("Response processed! Returning: " + webThumbResponse.getJobStatus().getStatuses());
+			}
+			return webThumbResponse.getJobStatus().getStatuses();
 		} catch (IOException e) {
 			throw new WebThumbException("failed to send request", e);
 		}
@@ -211,11 +242,33 @@ public class WebThumbService {
 	 * @throws WebThumbException
 	 */
 	public WebThumbCredits getCredits() throws WebThumbException {
-		WebThumb webThumb = WebThumb.creditsRequest(apikey);
 		if (LOGGER.isLoggable(Level.FINE)) {
 			LOGGER.fine("Attempting to send 'credits' request!");
 		}
 
+		WebThumb webThumb = WebThumb.creditsRequest(apikey);
+		HttpURLConnection connection = sendWebThumb(webThumb);
+
+		try {
+			WebThumbResponse webThumbResponse = SimpleXmlSerializer.parseResponse(connection.getInputStream(), WebThumbResponse.class);
+			if (LOGGER.isLoggable(Level.FINE)) {
+				LOGGER.fine("Response processed! Returning: " + webThumbResponse.getCredits());
+			}
+			return webThumbResponse.getCredits();
+		} catch (IOException e) {
+			throw new WebThumbException("failed to send request", e);
+		}
+	}
+
+
+	/**
+	 * Helper method used to actually send {@link WebThumb} request and check for common errors.
+	 * 
+	 * @param webThumb the request to send
+	 * @return connection to extract the response from
+	 * @throws WebThumbException if any error occurs
+	 */
+	private HttpURLConnection sendWebThumb(WebThumb webThumb) throws WebThumbException {
 		try {
 			HttpURLConnection connection = (HttpURLConnection) new URL(WEB_THUMB_URL).openConnection();
 			connection.setInstanceFollowRedirects(false);
@@ -227,24 +280,22 @@ public class WebThumbService {
 			int responseCode = connection.getResponseCode();
 			String contentType = getContentType(connection);
 			if (LOGGER.isLoggable(Level.FINE)) {
-				LOGGER.fine("'credits' request sent. Got response: " + responseCode + " " + connection.getResponseMessage());
+				LOGGER.fine("Request sent! Got response: " + responseCode + " " + connection.getResponseMessage());
+				LOGGER.fine("Response content type: " + contentType);
+				LOGGER.fine("Response content encoding: " + connection.getContentEncoding());
+				LOGGER.fine("Response content length: " + connection.getContentLength());
 			}
 
 			if (responseCode == HttpURLConnection.HTTP_OK) {
 				if (CONTENT_TYPE_TEXT_PLAIN.equals(contentType)) {
-					throw new WebThumbException("Got error message: " + IOUtils.toString(connection.getInputStream()));
+					throw new WebThumbException("Server side error: " + IOUtils.toString(connection.getInputStream()));
 				}
 				if (!CONTENT_TYPE_TEXT_XML.equals(contentType)) {
 					throw new WebThumbException("Unknown content type in response: " + contentType);
 				}
-				WebThumbResponse webThumbResponse = SimpleXmlSerializer.parseResponse(connection.getInputStream(), WebThumbResponse.class);
-				if (LOGGER.isLoggable(Level.FINE)) {
-					LOGGER.fine("Response processed! Returning: " + webThumbResponse.getCredits());
-					LOGGER.fine("Content type: " + contentType);
-				}
-				return webThumbResponse.getCredits();
+				return connection;
 			} else {
-				throw new WebThumbException("GOT error (" + connection.getResponseCode() + ") " + connection.getResponseMessage());
+				throw new WebThumbException("Server side error: " + connection.getResponseCode() + ") " + connection.getResponseMessage());
 			}
 		} catch (MalformedURLException e) {
 			throw new WebThumbException("failed to send request", e);
@@ -254,6 +305,12 @@ public class WebThumbService {
 	}
 
 
+	/**
+	 * Helper method to extract the content type from {@link HttpURLConnection} object
+	 * 
+	 * @param connection the connection
+	 * @return the related part of content type header
+	 */
 	private String getContentType(HttpURLConnection connection) {
 		String s = connection.getContentType();
 		int semicolonIndex = s.indexOf(';');

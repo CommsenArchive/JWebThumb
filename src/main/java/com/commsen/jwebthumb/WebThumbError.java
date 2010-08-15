@@ -18,52 +18,55 @@
  */
 package com.commsen.jwebthumb;
 
-import java.util.Date;
-
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.simpleframework.xml.Attribute;
 import org.simpleframework.xml.Text;
 
 /**
- * This class represents 'jobs' part of webthumb's response to "request" API call. See <a
- * href="http://webthumb.bluga.net/apidoc#request">http://webthumb.bluga.net/apidoc#request</a> for
- * details
+ * This class represents 'error' part of webthumb's response. See <a
+ * href="http://webthumb.bluga.net/apidoc#errorhandling"
+ * >http://webthumb.bluga.net/apidoc#errorhandling</a> for details
  * 
  * @author <a href="mailto:MilenDyankov@gmail.com">Milen Dyankov</a>
- * @see http://webthumb.bluga.net/apidoc#request
- * 
+ * @see http://webthumb.bluga.net/apidoc#errorhandling
+ * @since 0.3
  */
-public class WebThumbJob {
+public class WebThumbError {
 
-	@Attribute
-	private int estimate;
+	@Text(required = false)
+	private String value;
 
-	@Attribute(name = "time")
-	private Date time;
+	@Attribute(required = false)
+	private String type;
 
-	@Attribute
+	@Attribute(required = false)
+	private String code;
+
+	@Attribute(required = false)
 	private String url;
-
-	@Attribute
-	private int cost;
-
-	@Text
-	private String id;
 
 
 	/**
-	 * @return the estimate
+	 * @return the value
 	 */
-	public int getEstimate() {
-		return this.estimate;
+	public String getValue() {
+		return this.value;
 	}
 
 
 	/**
-	 * @return the time
+	 * @return the type
 	 */
-	public Date getTime() {
-		return this.time == null ? null : (Date) this.time.clone();
+	public String getType() {
+		return this.type;
+	}
+
+
+	/**
+	 * @return the code
+	 */
+	public String getCode() {
+		return this.code;
 	}
 
 
@@ -75,24 +78,9 @@ public class WebThumbJob {
 	}
 
 
-	/**
-	 * @return the cost
-	 */
-	public int getCost() {
-		return this.cost;
-	}
-
-
-	/**
-	 * @return the id
-	 */
-	public String getId() {
-		return this.id;
-	}
-
-
 	@Override
 	public String toString() {
 		return new ReflectionToStringBuilder(this).toString();
 	}
+
 }

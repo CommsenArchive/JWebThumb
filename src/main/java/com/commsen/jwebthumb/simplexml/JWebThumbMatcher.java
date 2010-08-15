@@ -25,6 +25,9 @@ import org.simpleframework.xml.transform.Matcher;
 import org.simpleframework.xml.transform.Transform;
 
 /**
+ * Implementation of {@link Matcher} which attaches {@link DateTransformer} as default transformer
+ * for {@link Date} objects.
+ * 
  * @author <a href="mailto:MilenDyankov@gmail.com">Milen Dyankov</a>
  * @since 0.3
  */

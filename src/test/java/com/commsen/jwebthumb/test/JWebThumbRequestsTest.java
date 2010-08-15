@@ -20,6 +20,7 @@
 package com.commsen.jwebthumb.test;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
@@ -32,6 +33,8 @@ import com.commsen.jwebthumb.WebThumbFetchRequest;
 import com.commsen.jwebthumb.WebThumbJob;
 import com.commsen.jwebthumb.WebThumbRequest;
 import com.commsen.jwebthumb.WebThumbService;
+import com.commsen.jwebthumb.WebThumbStatus;
+import com.commsen.jwebthumb.WebThumbStatusRequest;
 import com.commsen.jwebthumb.WebThumbFetchRequest.Size;
 import com.commsen.jwebthumb.WebThumbRequest.CustomThumbnail;
 import com.commsen.jwebthumb.WebThumbRequest.Excerpt;
@@ -95,6 +98,102 @@ public class JWebThumbRequestsTest {
 	}
 
 
+	@Test
+	public void testSendRequestWebThumbRequestWrongUsage() throws WebThumbException {
+		try {
+			webThumbService.sendRequest((WebThumbRequest) null);
+			Assert.fail("Called service with Null WebThumbRequest!");
+		} catch (IllegalArgumentException e) {
+			// expected
+		}
+		try {
+			webThumbService.sendRequest(new WebThumbRequest(null));
+			Assert.fail("Called service with Null URL!");
+		} catch (IllegalArgumentException e) {
+			// expected
+		}
+
+		/*
+		 * As described here http://blog.joshuaeichorn.com/archives/2008/08/24/webthumb-api-change/
+		 * requests with bad urls are silently ignored. Thus we should get null as response
+		 */
+		WebThumbJob simpleJob = webThumbService.sendRequest(new WebThumbRequest("NOT_A_URL"));
+		Assert.assertNull(simpleJob);
+
+		simpleJob = webThumbService.sendRequest(new WebThumbRequest("http://there.is.no.such.domain.com"));
+		Assert.assertNull(simpleJob);
+
+	}
+
+
+	@Test
+	public void testWebThumbStatusRequest() throws WebThumbException {
+		WebThumbStatusRequest webThumbStatusRequest = new WebThumbStatusRequest();
+		List<WebThumbStatus> statuses = webThumbService.getStatus(webThumbStatusRequest);
+		Assert.assertNotNull(statuses);
+
+		webThumbStatusRequest.addUrl("http://commsen.com");
+		webThumbStatusRequest.addUrl("http://milen.commsen.com");
+		statuses = webThumbService.getStatus(webThumbStatusRequest);
+		Assert.assertNotNull(statuses);
+		Assert.assertEquals(2, statuses.size());
+		Assert.assertNotNull(statuses.get(0).getSubmissionTime());
+		Assert.assertNotNull(statuses.get(1).getSubmissionTime());
+
+		webThumbStatusRequest = new WebThumbStatusRequest();
+		webThumbStatusRequest.addJob("wt4c6498c7c8c14");
+		webThumbStatusRequest.addUrl("wt4c6498c8a6a7f");
+		statuses = webThumbService.getStatus(webThumbStatusRequest);
+		Assert.assertNotNull(statuses);
+		Assert.assertEquals(2, statuses.size());
+		Assert.assertNotNull(statuses.get(0).getSubmissionTime());
+		Assert.assertNotNull(statuses.get(1).getSubmissionTime());
+
+		webThumbStatusRequest = new WebThumbStatusRequest();
+		webThumbStatusRequest.addUrl("http://commsen.com");
+		webThumbStatusRequest.addJob("wt4c6498c8a6a7f");
+		statuses = webThumbService.getStatus(webThumbStatusRequest);
+		Assert.assertNotNull(statuses);
+		Assert.assertEquals(2, statuses.size());
+		Assert.assertNotNull(statuses.get(0).getSubmissionTime());
+		Assert.assertNotNull(statuses.get(1).getSubmissionTime());
+
+	}
+
+
+	@Test
+	public void testWebThumbStatusRequestWrongUseage() throws WebThumbException {
+		WebThumbStatusRequest webThumbStatusRequest = new WebThumbStatusRequest();
+		try {
+			webThumbStatusRequest.addUrl(null);
+			Assert.fail("Null url added!");
+		} catch (IllegalArgumentException e) {
+			// expected
+		}
+		try {
+			webThumbStatusRequest.addJob(null);
+			Assert.fail("Null job added!");
+		} catch (IllegalArgumentException e) {
+			// expected
+		}
+		try {
+			webThumbService.getStatus(null);
+			Assert.fail("Null webThumbStatusRequest added!");
+		} catch (IllegalArgumentException e) {
+			// expected
+		}
+		webThumbStatusRequest.addJob("wrong_job_id");
+		List<WebThumbStatus> statuses = webThumbService.getStatus(webThumbStatusRequest);
+		Assert.assertNull(statuses);
+
+		webThumbStatusRequest.addJob("another_wrong_job_id");
+		webThumbStatusRequest.addJob("wt4c6498c8a6a7f");
+		statuses = webThumbService.getStatus(webThumbStatusRequest);
+		Assert.assertNotNull(statuses);
+		Assert.assertEquals(1, statuses.size());
+	}
+
+
 	/**
 	 * Test method for
 	 * {@link com.commsen.jwebthumb.WebThumbService#fetch(com.commsen.jwebthumb.WebThumbFetchRequest)}
@@ -129,6 +228,19 @@ public class JWebThumbRequestsTest {
 		try {
 			webThumbService.fetch(new WebThumbFetchRequest("wrong job id", Size.zip));
 			Assert.fail("Fetch with wrong job id didn't throw an exception!");
+		} catch (WebThumbException e) {
+			// This is expected
+		}
+	}
+
+
+	@Test
+	public void testFetchIncompleteJob() throws WebThumbException {
+		String url = "http://commsen.com";
+		WebThumbJob simpleJob = webThumbService.sendRequest(new WebThumbRequest(url));
+		try {
+			webThumbService.fetch(new WebThumbFetchRequest(simpleJob.getId(), Size.small));
+			Assert.fail("Fetch incomplete job didn't throw an exception!");
 		} catch (WebThumbException e) {
 			// This is expected
 		}

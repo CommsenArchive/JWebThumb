@@ -40,6 +40,7 @@ import org.xml.sax.SAXException;
 import com.commsen.jwebthumb.WebThumb;
 import com.commsen.jwebthumb.WebThumbFetchRequest;
 import com.commsen.jwebthumb.WebThumbRequest;
+import com.commsen.jwebthumb.WebThumbStatusRequest;
 import com.commsen.jwebthumb.WebThumbFetchRequest.Size;
 import com.commsen.jwebthumb.WebThumbRequest.CustomThumbnail;
 import com.commsen.jwebthumb.WebThumbRequest.Excerpt;
@@ -52,6 +53,14 @@ import com.commsen.jwebthumb.simplexml.SimpleXmlSerializer;
  */
 public class XMLSerializationTest {
 
+	/**
+	 * Tests the conversion of {@link WebThumbRequest} to XML
+	 * 
+	 * @throws SAXException
+	 * @throws IOException
+	 * @throws ParserConfigurationException
+	 * @throws XPathExpressionException
+	 */
 	@Test
 	public void serializeWebThumbRequest() throws SAXException, IOException, ParserConfigurationException, XPathExpressionException {
 		WebThumbRequest webThumbRequest = new WebThumbRequest("http://web.site.address");
@@ -94,6 +103,14 @@ public class XMLSerializationTest {
 	}
 
 
+	/**
+	 * Tests the conversion of {@link WebThumbFetchRequest} to XML
+	 * 
+	 * @throws SAXException
+	 * @throws IOException
+	 * @throws ParserConfigurationException
+	 * @throws XPathExpressionException
+	 */
 	@Test
 	public void serializeWebThumbFetch() throws SAXException, IOException, ParserConfigurationException, XPathExpressionException {
 		WebThumbFetchRequest webThumbFetchRequest = new WebThumbFetchRequest("JOB ID", Size.medium2);
@@ -112,6 +129,14 @@ public class XMLSerializationTest {
 	}
 
 
+	/**
+	 * Tests the conversion of {@link WebThumb#creditsRequest(String)} to XML
+	 * 
+	 * @throws SAXException
+	 * @throws IOException
+	 * @throws ParserConfigurationException
+	 * @throws XPathExpressionException
+	 */
 	@Test
 	public void serializeWebThumbCredits() throws SAXException, IOException, ParserConfigurationException, XPathExpressionException {
 		WebThumb webThumb = WebThumb.creditsRequest("API KEY");
@@ -128,6 +153,55 @@ public class XMLSerializationTest {
 	}
 
 
+	/**
+	 * Tests the conversion of {@link WebThumbStatusRequest} to XML
+	 * 
+	 * @throws SAXException
+	 * @throws IOException
+	 * @throws ParserConfigurationException
+	 * @throws XPathExpressionException
+	 */
+	@Test
+	public void serializeWebThumbStatusRequest() throws SAXException, IOException, ParserConfigurationException, XPathExpressionException {
+		WebThumbStatusRequest webThumbStatusRequest = new WebThumbStatusRequest();
+		webThumbStatusRequest.addUrl("http://foo.com");
+		webThumbStatusRequest.addUrl("http://bar.com");
+
+		XPath xPath = XPathFactory.newInstance().newXPath();
+
+		Document document = makeDOM(new WebThumb("API KEY", webThumbStatusRequest));
+		Assert.assertEquals("API KEY", xPath.evaluate("/webthumb/apikey", document));
+		Assert.assertEquals("http://foo.com", xPath.evaluate("/webthumb/status/url[1]", document));
+		Assert.assertEquals("http://bar.com", xPath.evaluate("/webthumb/status/url[2]", document));
+		Assert.assertEquals("", xPath.evaluate("/webthumb/status/job", document));
+
+		webThumbStatusRequest = new WebThumbStatusRequest();
+		webThumbStatusRequest.addJob("aaaa");
+		webThumbStatusRequest.addJob("bbbb");
+
+		document = makeDOM(new WebThumb("API KEY", webThumbStatusRequest));
+		Assert.assertEquals("API KEY", xPath.evaluate("/webthumb/apikey", document));
+		Assert.assertEquals("aaaa", xPath.evaluate("/webthumb/status/job[1]", document));
+		Assert.assertEquals("bbbb", xPath.evaluate("/webthumb/status/job[2]", document));
+		Assert.assertEquals("", xPath.evaluate("/webthumb/status/url", document));
+
+		document = makeDOM(new WebThumb("API KEY", new WebThumbStatusRequest()));
+		Assert.assertEquals("API KEY", xPath.evaluate("/webthumb/apikey", document));
+		Assert.assertEquals("", xPath.evaluate("/webthumb/status", document));
+
+	}
+
+
+	/**
+	 * Tests whether {@link SimpleXmlSerializer#generateRequest(Object, java.io.OutputStream)}
+	 * prints to provided stream the same XML as {@link SimpleXmlSerializer#generateRequest(Object)}
+	 * returns.
+	 * 
+	 * @throws SAXException
+	 * @throws IOException
+	 * @throws ParserConfigurationException
+	 * @throws XPathExpressionException
+	 */
 	@Test
 	public void serializeToOutputStream() throws SAXException, IOException, ParserConfigurationException, XPathExpressionException {
 		WebThumb webThumb = WebThumb.creditsRequest("API KEY");
@@ -135,6 +209,26 @@ public class XMLSerializationTest {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		SimpleXmlSerializer.generateRequest(webThumb, baos);
 		Assert.assertEquals(baos.toString(), xml);
+	}
+
+
+	/**
+	 * Helper method converting {@link WebThumb} to {@link Document}
+	 * 
+	 * @param object
+	 * @return
+	 * @throws SAXException
+	 * @throws IOException
+	 * @throws ParserConfigurationException
+	 */
+	private Document makeDOM(WebThumb webThumb) throws SAXException, IOException, ParserConfigurationException {
+		String xml = SimpleXmlSerializer.generateRequest(webThumb);
+
+		Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new InputSource(new StringReader(xml)));
+		Element webthumb = document.getDocumentElement();
+		Assert.assertEquals("webthumb", webthumb.getNodeName());
+		Assert.assertTrue(webthumb.hasChildNodes());
+		return document;
 	}
 
 }

@@ -18,12 +18,14 @@
  */
 package com.commsen.jwebthumb;
 
+import org.apache.commons.lang.Validate;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.simpleframework.xml.Element;
 
 /**
- * This class represents the payload of webthumb's 'fetch' API call. See
- * http://webthumb.bluga.net/apidoc#fetch for details
+ * This class represents the payload of webthumb's 'fetch' API call. See <a
+ * href="http://webthumb.bluga.net/apidoc#fetch">http://webthumb.bluga.net/apidoc#fetch</a> for
+ * details
  * 
  * @author <a href="mailto:MilenDyankov@gmail.com">Milen Dyankov</a>
  * @see http://webthumb.bluga.net/apidoc#fetch
@@ -56,7 +58,8 @@ public class WebThumbFetchRequest {
 	 * @param size - the size of the file
 	 */
 	public WebThumbFetchRequest(String job, Size size) {
-		super();
+		Validate.notNull(job, "job is null!");
+		Validate.notNull(size, "size is null!");
 		this.job = job;
 		this.size = size;
 	}

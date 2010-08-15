@@ -29,6 +29,10 @@ import org.simpleframework.xml.Serializer;
 import org.simpleframework.xml.core.Persister;
 
 /**
+ * Utility class responsible for converting objects to XML and XMLs to Objects. The class relies on
+ * <a href="http://simple.sourceforge.net/">Simple XML serialization project</a>
+ * 
+ * 
  * @author <a href="mailto:MilenDyankov@gmail.com">Milen Dyankov</a>
  * @since 0.3
  */
@@ -38,10 +42,10 @@ public class SimpleXmlSerializer {
 
 
 	/**
-	 * Converts known 'request' object to XML
+	 * Converts property annotated object to XML
 	 * 
 	 * 
-	 * @param object known 'request' object
+	 * @param object property annotated object
 	 * @return XML representation of the object
 	 */
 	public static String generateRequest(Object object) {
@@ -58,31 +62,27 @@ public class SimpleXmlSerializer {
 
 
 	/**
-	 * Converts known 'request' object to XML
+	 * Converts property annotated object to XML and writes it to given stream
 	 * 
-	 * 
-	 * @param object known 'request' object
-	 * @return XML representation of the object
+	 * @param object property annotated object
+	 * @param outputStream the stream to write the XML to
 	 */
-	public static String generateRequest(Object object, OutputStream outputStream) {
+	public static void generateRequest(Object object, OutputStream outputStream) {
 		Serializer serializer = new Persister();
-		StringWriter writer = new StringWriter();
 		try {
 			serializer.write(object, outputStream);
 		} catch (Exception e) {
 			LOGGER.log(Level.SEVERE, "Failed to generate XML request!", e);
-			return null;
 		}
-		return writer.toString();
 	}
 
 
 	/**
-	 * Converts XML to known 'request' object
+	 * Converts XML to appropriate object based on objects' annotations
 	 * 
 	 * @param <T>
-	 * @param xml
-	 * @param clazz
+	 * @param xml string containing the XML to be converted to object
+	 * @param clazz the type of the return object
 	 * @return
 	 */
 	public static <T> T parseResponse(String xml, Class<T> clazz) {
@@ -97,11 +97,11 @@ public class SimpleXmlSerializer {
 
 
 	/**
-	 * Converts XML to known 'request' object
+	 * Converts XML stream to appropriate object based on objects' annotations
 	 * 
 	 * @param <T>
-	 * @param xml
-	 * @param clazz
+	 * @param inputStream the stream to read the XML from
+	 * @param clazz the type of the return object
 	 * @return
 	 */
 	public static <T> T parseResponse(InputStream inputStream, Class<T> clazz) {

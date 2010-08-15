@@ -16,83 +16,61 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with JWebThumb library.  If not, see <http://www.gnu.org/licenses/lgpl.html>.
  */
+
 package com.commsen.jwebthumb;
 
-import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
-import org.simpleframework.xml.Attribute;
-import org.simpleframework.xml.Text;
+import org.simpleframework.xml.ElementList;
 
 /**
- * This class represents 'jobs' part of webthumb's response to "request" API call. See <a
- * href="http://webthumb.bluga.net/apidoc#request">http://webthumb.bluga.net/apidoc#request</a> for
+ * This class represents 'jobStatus' part of webthumb's response to "status" API call. See <a
+ * href="http://webthumb.bluga.net/apidoc#status">http://webthumb.bluga.net/apidoc#status</a> for
  * details
  * 
  * @author <a href="mailto:MilenDyankov@gmail.com">Milen Dyankov</a>
- * @see http://webthumb.bluga.net/apidoc#request
+ * @since 0.3
  * 
  */
-public class WebThumbJob {
+public class WebThumbJobStatus {
 
-	@Attribute
-	private int estimate;
+	@ElementList(required = false, inline = true, entry = "status")
+	private List<WebThumbStatus> statuses;
 
-	@Attribute(name = "time")
-	private Date time;
-
-	@Attribute
-	private String url;
-
-	@Attribute
-	private int cost;
-
-	@Text
-	private String id;
+	@ElementList(required = false, inline = true, entry = "error")
+	private List<WebThumbError> errors;
 
 
-	/**
-	 * @return the estimate
-	 */
-	public int getEstimate() {
-		return this.estimate;
-	}
-
-
-	/**
-	 * @return the time
-	 */
-	public Date getTime() {
-		return this.time == null ? null : (Date) this.time.clone();
-	}
-
-
-	/**
-	 * @return the url
-	 */
-	public String getUrl() {
-		return this.url;
-	}
-
-
-	/**
-	 * @return the cost
-	 */
-	public int getCost() {
-		return this.cost;
-	}
-
-
-	/**
-	 * @return the id
-	 */
-	public String getId() {
-		return this.id;
-	}
-
+	// @Element(required = false)
+	// private WebThumbError error;
 
 	@Override
 	public String toString() {
 		return new ReflectionToStringBuilder(this).toString();
 	}
+
+
+	/**
+	 * @return the statuses
+	 */
+	public List<WebThumbStatus> getStatuses() {
+		return this.statuses;
+	}
+
+
+	/**
+	 * @return the errors
+	 */
+	public List<WebThumbError> getErrors() {
+		return this.errors;
+	}
+
+	/**
+	 * @return the error
+	 */
+	// public WebThumbError getError() {
+	// return this.error;
+	// }
+
 }

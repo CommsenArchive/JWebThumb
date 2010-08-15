@@ -20,14 +20,16 @@ package com.commsen.jwebthumb;
 
 import java.io.Serializable;
 
+import org.apache.commons.lang.Validate;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.simpleframework.xml.Attribute;
 import org.simpleframework.xml.Element;
 
 /**
- * This class represents the payload of webthumb's 'request' API call. See
- * http://webthumb.bluga.net/apidoc#request for details
+ * This class represents the payload of webthumb's 'request' API call. See <a
+ * href="http://webthumb.bluga.net/apidoc#request">http://webthumb.bluga.net/apidoc#request</a> for
+ * details
  * 
  * @author <a href="mailto:MilenDyankov@gmail.com">Milen Dyankov</a>
  * @see http://webthumb.bluga.net/apidoc#request
@@ -35,9 +37,6 @@ import org.simpleframework.xml.Element;
  */
 public class WebThumbRequest implements Serializable {
 
-	/**
-     * 
-     */
 	private static final long serialVersionUID = 1L;
 
 	public static enum OutputType {
@@ -106,11 +105,14 @@ public class WebThumbRequest implements Serializable {
 
 
 	public WebThumbRequest(String url) {
+		Validate.notNull(url, "URL is NULL!");
 		this.url = url;
 	}
 
 
 	public WebThumbRequest(String url, OutputType outputType) {
+		Validate.notNull(url, "URL is NULL!");
+		Validate.notNull(outputType, "outputType is NULL!");
 		this.url = url;
 		this.outputType = outputType;
 	}

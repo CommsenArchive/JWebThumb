@@ -26,11 +26,11 @@ import org.simpleframework.xml.ElementList;
 import org.simpleframework.xml.Root;
 
 /**
- * This class represents the xml payload of all webthumb requests. See
- * http://webthumb.bluga.net/apidoc for details.
+ * This class represents the xml payload of all webthumb requests. See <a
+ * href="http://webthumb.bluga.net/apidoc">http://webthumb.bluga.net/apidoc</a> for details.
  * 
  * @author <a href="mailto:MilenDyankov@gmail.com">Milen Dyankov</a>
- * 
+ * @see http://webthumb.bluga.net/apidoc
  */
 @Root(name = "webthumb")
 public class WebThumb {
@@ -38,16 +38,28 @@ public class WebThumb {
 	@Element
 	private String apikey;
 
+	@Element
+	private int version = 3;
+
 	@ElementList(required = false, inline = true, entry = "request")
 	private List<WebThumbRequest> requests;
 
 	@Element(required = false, name = "fetch")
 	private WebThumbFetchRequest fetchRequest;
 
+	@Element(required = false, name = "status")
+	private WebThumbStatusRequest statusRequest;
+
 	@Element(required = false)
 	private WebThumbCredits credits;
 
 
+	/**
+	 * Returns new credits request.
+	 * 
+	 * @param apikey the WebThumb's API key to use
+	 * @return WebThumb credits object
+	 */
 	public static WebThumb creditsRequest(String apikey) {
 		WebThumb webThumb = new WebThumb(apikey);
 		webThumb.credits = new WebThumbCredits();
@@ -55,20 +67,48 @@ public class WebThumb {
 	}
 
 
+	/**
+	 * Creates new empty WebThumb object
+	 * 
+	 * @param apikey the WebThumb's API key to use
+	 */
 	private WebThumb(String apikey) {
 		this.apikey = apikey;
 	}
 
 
+	/**
+	 * Creates new WebThumb object from provided {@link WebThumbRequest} requests
+	 * 
+	 * @param apikey the WebThumb's API key to use
+	 * @param requests
+	 */
 	public WebThumb(String apikey, List<WebThumbRequest> requests) {
 		this.apikey = apikey;
 		this.requests = requests;
 	}
 
 
+	/**
+	 * Creates new WebThumb object from provided {@link WebThumbFetchRequest} request
+	 * 
+	 * @param apikey the WebThumb's API key to use
+	 * @param fetchRequest
+	 */
 	public WebThumb(String apikey, WebThumbFetchRequest fetchRequest) {
 		this.apikey = apikey;
 		this.fetchRequest = fetchRequest;
 	}
 
+
+	/**
+	 * Creates new WebThumb object from provided {@link WebThumbStatusRequest} request
+	 * 
+	 * @param apikey the WebThumb's API key to use
+	 * @param statusRequest
+	 */
+	public WebThumb(String apikey, WebThumbStatusRequest statusRequest) {
+		this.apikey = apikey;
+		this.statusRequest = statusRequest;
+	}
 }

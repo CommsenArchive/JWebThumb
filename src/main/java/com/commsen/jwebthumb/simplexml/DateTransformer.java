@@ -25,6 +25,9 @@ import java.util.Date;
 import org.simpleframework.xml.transform.Transform;
 
 /**
+ * Implementation of {@link Transform} which transforms dates according to
+ * <code>yyyy-MM-dd HH:mm:ss</code> format.
+ * 
  * @author <a href="mailto:MilenDyankov@gmail.com">Milen Dyankov</a>
  * @since 0.3
  */
