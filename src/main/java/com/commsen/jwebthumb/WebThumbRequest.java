@@ -20,12 +20,16 @@ package com.commsen.jwebthumb;
 
 import java.io.Serializable;
 
+import org.apache.commons.lang.Validate;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.simpleframework.xml.Attribute;
+import org.simpleframework.xml.Element;
 
 /**
- * This class represents the payload of webthumb's 'request' API call. See
- * http://webthumb.bluga.net/apidoc#request for details
+ * This class represents the payload of webthumb's 'request' API call. See <a
+ * href="http://webthumb.bluga.net/apidoc#request">http://webthumb.bluga.net/apidoc#request</a> for
+ * details
  * 
  * @author <a href="mailto:MilenDyankov@gmail.com">Milen Dyankov</a>
  * @see http://webthumb.bluga.net/apidoc#request
@@ -33,9 +37,6 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  */
 public class WebThumbRequest implements Serializable {
 
-	/**
-     * 
-     */
 	private static final long serialVersionUID = 1L;
 
 	public static enum OutputType {
@@ -45,69 +46,85 @@ public class WebThumbRequest implements Serializable {
 	/**
 	 * The url to snapshot
 	 */
+	@Element
 	private String url;
 
 	/**
 	 * The image output type (jpg|png|png8)
 	 */
-	private OutputType outputType;
+	@Element
+	private OutputType outputType = OutputType.jpg;
 
 	/**
 	 * Width of the browser, 15 to 1280;
 	 */
+	@Element(required = false)
 	private Integer width;
 
 	/**
 	 * Height of the browser, 15 to 2048
 	 */
+	@Element(required = false)
 	private Integer height;
 
 	/**
 	 * Output a full sized snapshot
 	 */
+	@Element(required = false)
 	private Integer fullthumb;
 
 	/**
 	 * 2 attributes width, height (1 to browser height), width (1 to browser width)
 	 */
+	@Element(required = false)
 	private CustomThumbnail customThumbnail;
 
 	/**
 	 * Visual effect thumbnail to produce (mirror|dropshadow|border)
 	 */
+	@Element(required = false)
 	private String effect;
 
 	/**
 	 * Wait before taking the snapshot (1 to 15 seconds, 3 second default)
 	 */
+	@Element(required = false)
 	private Integer delay;
 
 	/**
 	 * Url to call when the thumbnail is complete
 	 */
+	@Element(required = false)
 	private String notify;
 
 	/**
 	 * Size and offset of the excerpt thumnbnail
 	 */
+	@Element(required = false)
 	private Excerpt excerpt;
 
 
 	public WebThumbRequest(String url) {
+		Validate.notNull(url, "URL is NULL!");
 		this.url = url;
 	}
 
 
 	public WebThumbRequest(String url, OutputType outputType) {
+		Validate.notNull(url, "URL is NULL!");
+		Validate.notNull(outputType, "outputType is NULL!");
 		this.url = url;
 		this.outputType = outputType;
 	}
 
-	public static class Excerpt {
+	public static class Excerpt implements Serializable {
+		private static final long serialVersionUID = 1L;
+
+		@Element
 		private int x, y, width, height;
 
 
-		Excerpt(int x, int y, int width, int height) {
+		public Excerpt(int x, int y, int width, int height) {
 			super();
 			this.x = x;
 			this.y = y;
@@ -123,11 +140,14 @@ public class WebThumbRequest implements Serializable {
 
 	}
 
-	public static class CustomThumbnail {
+	public static class CustomThumbnail implements Serializable {
+		private static final long serialVersionUID = 1L;
+
+		@Attribute
 		private int width, height;
 
 
-		CustomThumbnail(int width, int height) {
+		public CustomThumbnail(int width, int height) {
 			super();
 			this.width = width;
 			this.height = height;

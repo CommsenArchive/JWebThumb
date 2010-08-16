@@ -16,26 +16,30 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with JWebThumb library.  If not, see <http://www.gnu.org/licenses/lgpl.html>.
  */
-package com.commsen.jwebthumb;
 
-import com.thoughtworks.xstream.converters.basic.DoubleConverter;
+package com.commsen.jwebthumb.simplexml;
+
+import java.util.Date;
+
+import org.simpleframework.xml.transform.Matcher;
+import org.simpleframework.xml.transform.Transform;
 
 /**
- * Class extends {@link DoubleConverter} to allow conversion of 'null' and empty strings to 0
+ * Implementation of {@link Matcher} which attaches {@link DateTransformer} as default transformer
+ * for {@link Date} objects.
  * 
  * @author <a href="mailto:MilenDyankov@gmail.com">Milen Dyankov</a>
- * 
+ * @since 0.3
  */
-public class WebThumbDoubleConverter extends DoubleConverter {
+public class JWebThumbMatcher implements Matcher {
 
-	/*
-	 * (non-Javadoc)
-	 * @see com.thoughtworks.xstream.converters.basic.DoubleConverter#fromString(java.lang.String)
+	/**
+	 * @see org.simpleframework.xml.transform.Matcher#match(java.lang.Class)
 	 */
-	@Override
-	public Object fromString(String str) {
-		if (str == null || str.trim().length() == 0) return 0d;
-		return super.fromString(str);
+	@SuppressWarnings("unchecked")
+	public Transform match(Class type) throws Exception {
+		if (type.equals(Date.class)) return new DateTransformer();
+		return null;
 	}
 
 }
