@@ -138,6 +138,26 @@ will be ready in about 20 seconds! This request costs 1 credit(s). Please use 'w
 +------------------------------------------------------------------------------------------------------------------------+ 	
 
 
+* Check status
+
+	The following example shows how to check whether thumbnail is ready to be fetched
+	
++------------------------------------------------------------------------------------------------------------------------+ 	
+		WebThumbStatusRequest webThumbStatusRequest = new WebThumbStatusRequest();
+		webThumbStatusRequest.addUrl("http://your.web.site.com");
+		webThumbStatusRequest.addUrl("http://another.web.site.com");
+		List<WebThumbStatus> statuses = webThumbService.getStatus(webThumbStatusRequest);
++------------------------------------------------------------------------------------------------------------------------+ 	
+
+	Alternatively job ids can be used instead of URL
+	
++------------------------------------------------------------------------------------------------------------------------+ 	
+		WebThumbStatusRequest webThumbStatusRequest = new WebThumbStatusRequest();
+		webThumbStatusRequest.addUrl("http://your.web.site.com");
+		webThumbStatusRequest.addJob("wt4c47c204eae05");
+		List<WebThumbStatus> statuses = webThumbService.getStatus(webThumbStatusRequest);
++------------------------------------------------------------------------------------------------------------------------+ 	
+
 
 * Fetch thumbnail
 
@@ -146,9 +166,15 @@ will be ready in about 20 seconds! This request costs 1 credit(s). Please use 'w
 +------------------------------------------------------------------------------------------------------------------------+ 	
 	WebThumbFetchRequest fetchRequest = new WebThumbFetchRequest("wt4c47c204eae05", Size.zip);
 	byte[] imageBytes = webThumbService.fetch(fetchRequest);
-	FileOutputStream fos = new FileOutputStream(new File("/some/folder/site_thumbnails.zip"));
-	fos.write(imageBytes);
 +------------------------------------------------------------------------------------------------------------------------+ 	
+
+	Alternatively instead of loading it in memory the thumbnail bytes can be send to given output stream.
+	
++------------------------------------------------------------------------------------------------------------------------+ 	
+	WebThumbFetchRequest fetchRequest = new WebThumbFetchRequest("wt4c47c204eae05", Size.zip);
+	webThumbService.fetch(fetchRequest, new FileOutputStream(new File("PATH_TO_FILE")));
++------------------------------------------------------------------------------------------------------------------------+ 	
+	
 	
 	Possible fetch sizes are :
 
