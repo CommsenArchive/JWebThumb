@@ -19,6 +19,7 @@
 
 package com.commsen.jwebthumb.test;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
 
@@ -206,6 +207,10 @@ public class JWebThumbRequestsTest {
 		byte[] fileContent = webThumbService.fetch(new WebThumbFetchRequest("wt4c59de18347f4", Size.zip));
 		Assert.assertNotNull(fileContent);
 		Assert.assertTrue(fileContent.length > 0);
+
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		webThumbService.fetch(new WebThumbFetchRequest("wt4c59de18347f4", Size.zip), baos);
+		Assert.assertArrayEquals(fileContent, baos.toByteArray());
 	}
 
 

@@ -20,6 +20,7 @@
 package com.commsen.jwebthumb;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -131,6 +132,55 @@ public class WebThumbService {
 	 * @throws WebThumbException if the file can not be fetched for whatever reason
 	 */
 	public byte[] fetch(WebThumbFetchRequest webThumbFetchRequest) throws WebThumbException {
+		HttpURLConnection connection = getFetchConnection(webThumbFetchRequest);
+		int contentLength = connection.getContentLength();
+		if (contentLength != -1) {
+			byte[] data;
+			try {
+				data = IOUtils.toByteArray(connection.getInputStream());
+			} catch (IOException e) {
+				throw new WebThumbException("failed to read response", e);
+			}
+			if (data.length != contentLength) {
+				throw new WebThumbException("Read " + data.length + " bytes; Expected " + contentLength + " bytes");
+			}
+			if (LOGGER.isLoggable(Level.FINE)) {
+				LOGGER.fine("Response processed! Returning: " + data.length + " bytes of data");
+			}
+			return data;
+		} else {
+			throw new WebThumbException("Failed to fetch image! Missing content length!");
+		}
+	}
+
+
+	/**
+	 * Fetches single file form webthumb site and writes its content to given output stream.
+	 * Depending on what image format was requested (jpg|png|png8) and what file size is set in
+	 * {@link WebThumbFetchRequest} it will be the content of the jpg, png, png8 or zip file.
+	 * 
+	 * @since 0.3
+	 * 
+	 * @param webThumbFetchRequest fetch request containing the job and size to be fetched
+	 * @param outputStream output stream to write the result to
+	 * @throws WebThumbException if the file can not be fetched for whatever reason
+	 */
+	public void fetch(WebThumbFetchRequest webThumbFetchRequest, OutputStream outputStream) throws WebThumbException {
+		HttpURLConnection connection = getFetchConnection(webThumbFetchRequest);
+		int contentLength = connection.getContentLength();
+		if (contentLength != -1) {
+			try {
+				IOUtils.copy(connection.getInputStream(), outputStream);
+			} catch (IOException e) {
+				throw new WebThumbException("failed to read response", e);
+			}
+		} else {
+			throw new WebThumbException("Failed to fetch image! Missing content length!");
+		}
+	}
+
+
+	private HttpURLConnection getFetchConnection(WebThumbFetchRequest webThumbFetchRequest) throws WebThumbException {
 		Validate.notNull(webThumbFetchRequest, "webThumbFetchRequest is null!");
 		if (LOGGER.isLoggable(Level.FINE)) {
 			LOGGER.fine("Attempting to send webThumbFetchRequest: " + webThumbFetchRequest);
@@ -156,22 +206,7 @@ public class WebThumbService {
 				if (CONTENT_TYPE_TEXT_PLAIN.equals(contentType)) {
 					throw new WebThumbException("Server side error: " + IOUtils.toString(connection.getInputStream()));
 				}
-
-				int contentLength = connection.getContentLength();
-				if (contentLength != -1) {
-
-					byte[] data = IOUtils.toByteArray(connection.getInputStream());
-					if (data.length != contentLength) {
-						throw new WebThumbException("Read " + data.length + " bytes; Expected " + contentLength + " bytes");
-					}
-					if (LOGGER.isLoggable(Level.FINE)) {
-						LOGGER.fine("Response processed! Returning: " + data.length + " bytes of data");
-					}
-					return data;
-
-				} else {
-					throw new WebThumbException("Failed to fetch image! Missing content length!");
-				}
+				return connection;
 			} else if (responseCode == HttpURLConnection.HTTP_INTERNAL_ERROR) {
 				WebThumbResponse webThumbResponse = SimpleXmlSerializer.parseResponse(connection.getErrorStream(), WebThumbResponse.class);
 				throw new WebThumbException("Server side error: " + webThumbResponse.getError().getValue());
@@ -198,6 +233,8 @@ public class WebThumbService {
 	 * If your need to make a lot of requests, please look into using notifications instead of
 	 * polling for status. See {@link WebThumbRequest#setNotify(String)} and
 	 * {@link WebThumbNotificationServlet} for more details!
+	 * 
+	 * @since 0.3
 	 * 
 	 * @param webThumbStatusRequest fetch request containing the job and size to be fetched
 	 * @return list of job statuses
