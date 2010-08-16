@@ -143,21 +143,26 @@ will be ready in about 20 seconds! This request costs 1 credit(s). Please use 'w
 	The following example shows how to check whether thumbnail is ready to be fetched
 	
 +------------------------------------------------------------------------------------------------------------------------+ 	
-		WebThumbStatusRequest webThumbStatusRequest = new WebThumbStatusRequest();
-		webThumbStatusRequest.addUrl("http://your.web.site.com");
-		webThumbStatusRequest.addUrl("http://another.web.site.com");
-		List<WebThumbStatus> statuses = webThumbService.getStatus(webThumbStatusRequest);
+	WebThumbStatusRequest webThumbStatusRequest = new WebThumbStatusRequest();
+	webThumbStatusRequest.addUrl("http://your.web.site.com");
+	webThumbStatusRequest.addUrl("http://another.web.site.com");
+	List<WebThumbStatus> statuses = webThumbService.getStatus(webThumbStatusRequest);
 +------------------------------------------------------------------------------------------------------------------------+ 	
 
 	Alternatively job ids can be used instead of URL
 	
 +------------------------------------------------------------------------------------------------------------------------+ 	
-		WebThumbStatusRequest webThumbStatusRequest = new WebThumbStatusRequest();
-		webThumbStatusRequest.addUrl("http://your.web.site.com");
-		webThumbStatusRequest.addJob("wt4c47c204eae05");
-		List<WebThumbStatus> statuses = webThumbService.getStatus(webThumbStatusRequest);
+	WebThumbStatusRequest webThumbStatusRequest = new WebThumbStatusRequest();
+	webThumbStatusRequest.addUrl("http://your.web.site.com");
+	webThumbStatusRequest.addJob("wt4c47c204eae05");
+	List<WebThumbStatus> statuses = webThumbService.getStatus(webThumbStatusRequest);
 +------------------------------------------------------------------------------------------------------------------------+ 	
 
+	Since you can check the status of multiple jobs at once, try to combine these requests and make sure not to make more 
+	then 1 status request per second. More requests then that may get you temporarily blocked at the firewall. Best 
+	Practice is to make a status request at most every 10 seconds.
+	
+	<< If you are developing web application try using notifications instead !!! >>
 
 * Fetch thumbnail
 
@@ -168,7 +173,7 @@ will be ready in about 20 seconds! This request costs 1 credit(s). Please use 'w
 	byte[] imageBytes = webThumbService.fetch(fetchRequest);
 +------------------------------------------------------------------------------------------------------------------------+ 	
 
-	Alternatively instead of loading it in memory the thumbnail bytes can be send to given output stream.
+	Alternatively instead of loading the thumbnail in memory the it can be send to given output stream.
 	
 +------------------------------------------------------------------------------------------------------------------------+ 	
 	WebThumbFetchRequest fetchRequest = new WebThumbFetchRequest("wt4c47c204eae05", Size.zip);
