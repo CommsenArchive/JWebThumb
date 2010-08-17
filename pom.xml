@@ -6,7 +6,7 @@
 
 	<groupId>com.commsen</groupId>
 	<artifactId>jwebthumb</artifactId>
-	<version>0.3-SNAPSHOT</version>
+	<version>0.3</version>
 	<packaging>jar</packaging>
 
 	<name>JWebThumb</name>
@@ -127,7 +127,7 @@
 					</execution>
 				</executions>
 				<configuration>
-					<keyname>6967ECA1</keyname>
+					<keyname>8A2D2B40</keyname>
         		</configuration>
 			</plugin>
 		</plugins>
