@@ -28,6 +28,8 @@ import java.util.logging.Logger;
 import org.simpleframework.xml.Serializer;
 import org.simpleframework.xml.core.Persister;
 
+import com.commsen.jwebthumb.WebThumbException;
+
 /**
  * Utility class responsible for converting objects to XML and XMLs to Objects. The class relies on
  * <a href="http://simple.sourceforge.net/">Simple XML serialization project</a>
@@ -103,14 +105,14 @@ public class SimpleXmlSerializer {
 	 * @param inputStream the stream to read the XML from
 	 * @param clazz the type of the return object
 	 * @return
+	 * @throws WebThumbException 
 	 */
-	public static <T> T parseResponse(InputStream inputStream, Class<T> clazz) {
+	public static <T> T parseResponse(InputStream inputStream, Class<T> clazz) throws WebThumbException {
 		Serializer serializer = new Persister(new JWebThumbMatcher());
 		try {
 			return serializer.read(clazz, inputStream);
 		} catch (Exception e) {
-			LOGGER.log(Level.SEVERE, "Failed to parse XML response!", e);
-			return null;
+			throw new WebThumbException("Failed to parse XML response!", e);
 		}
 	}
 
