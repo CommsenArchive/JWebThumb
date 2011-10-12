@@ -1,0 +1,2 @@
+mvn clean package source:jar javadoc:jar gpg:sign repository:bundle-create
+mvn assembly:assembly
